@@ -62,6 +62,7 @@ var (
 	funcs    = make(template.FuncMap)
 
 	DefaultMux = true
+	RpcPage    = "/debug/requests"
 )
 
 type section struct {
@@ -106,7 +107,7 @@ SHA256 {{.BinaryHash}}<br>
 Running as {{.Username}} on {{.Hostname}}<br>
 Load {{.LoadAvg}}<br>
 View <a href=/debug/status>status</a>,
-	<a href=/debug/requests>requests</a>
+	<a href={{.RpcPage}}>requests</a>
 </div>
 </div>`
 
@@ -149,6 +150,7 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 		StartTime   string
 		CurrentTime string
 		LoadAvg     string
+		RpcPage     string
 	}{
 		Sections:    sections,
 		BinaryName:  binaryName,
@@ -158,6 +160,7 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 		StartTime:   serverStart.Format(time.RFC1123),
 		CurrentTime: time.Now().Format(time.RFC1123),
 		LoadAvg:     loadavg,
+		RpcPage:     RpcPage,
 	}
 
 	if err := tmpl.ExecuteTemplate(w, "status", data); err != nil {
