@@ -63,6 +63,7 @@ var (
 
 	DefaultMux = true
 	RpcPage    = "/debug/requests"
+	Favicon    = ""
 )
 
 type section struct {
@@ -75,6 +76,9 @@ var statusHTML = `<!DOCTYPE html>
 <html>
 <head>
 <title>Status for {{.BinaryName}}</title>
+{{ if not (eq .Favicon "") }}
+<link rel="shortcut icon" href="{{.Favicon}}">
+{{ end }}
 <style>
 body {
 font-family: sans-serif;
@@ -151,6 +155,7 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 		CurrentTime string
 		LoadAvg     string
 		RpcPage     string
+		Favicon     string
 	}{
 		Sections:    sections,
 		BinaryName:  binaryName,
@@ -161,6 +166,7 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 		CurrentTime: time.Now().Format(time.RFC1123),
 		LoadAvg:     loadavg,
 		RpcPage:     RpcPage,
+		Favicon:     Favicon,
 	}
 
 	if err := tmpl.ExecuteTemplate(w, "status", data); err != nil {
